@@ -1,6 +1,7 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using Cinemachine;
+using UnityEngine.UI; // Tarvitaan Sliderille
 
 public class PauseMenu : MonoBehaviour
 {
@@ -9,43 +10,49 @@ public class PauseMenu : MonoBehaviour
     [Header("UI")]
     public GameObject pauseMenuUI;
     public GameObject settingsPanel;
+    public Slider musicSlider;   // 🎵 Liukusäädin musiikille
 
     [Header("References")]
-    // Assign in Inspector (optional, we also auto-find in Awake)
     public SelectorUIManager uiManager;
+    public AudioManager audioManager; // 🎧 Viittaus AudioManageriin
 
     void Awake()
     {
-        // Fallback: auto-find the SelectorUIManager if not wired in Inspector
+        // Fallback: auto-find managerit jos ei ole asetettu
         if (uiManager == null)
-        {
             uiManager = FindObjectOfType<SelectorUIManager>(true);
-        }
+        if (audioManager == null)
+            audioManager = FindObjectOfType<AudioManager>(true);
+    }
+
+    void Start()
+    {
+        // Jos AudioManager löytyy, haetaan nykyinen äänenvoimakkuus liukusäätimeen
+        if (audioManager != null && musicSlider != null)
+            musicSlider.value = audioManager.GetMusicVolume();
+
+        // Kytketään liukusäädin funktioon
+        if (musicSlider != null)
+            musicSlider.onValueChanged.AddListener(OnMusicVolumeChanged);
     }
 
     void Update()
     {
-        // If Escape was already used to close a gameplay UI this frame, ignore it here.
         if (SelectorUIManager.EatEscapeThisFrame) return;
 
         bool esc = Input.GetKeyDown(KeyCode.Escape);
-        bool p   = Input.GetKeyDown(KeyCode.P);
+        bool p = Input.GetKeyDown(KeyCode.P);
 
-        // If Settings is open, Escape should go back to the Pause menu (not resume gameplay)
+        // Jos asetukset on auki, ESC palaa takaisin pause-valikkoon
         if (esc && settingsPanel != null && settingsPanel.activeSelf)
         {
             BackFromSettings();
             return;
         }
 
-        // If any gameplay UI (quest board, shop, etc.) is open, do NOT toggle pause here.
         if ((esc || p) && uiManager != null && uiManager.IsAnyUIOpen)
-        {
-            // SelectorUIManager handles closing on Escape. We do nothing.
             return;
-        }
 
-        // Normal pause toggle
         if (esc || p)
         {
             if (GameIsPaused) Resume();
@@ -56,7 +63,7 @@ public class PauseMenu : MonoBehaviour
     public void Resume()
     {
         if (settingsPanel != null) settingsPanel.SetActive(false);
-        if (pauseMenuUI != null)  pauseMenuUI.SetActive(false);
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
 
         Time.timeScale = 1f;
         GameIsPaused = false;
@@ -65,7 +72,7 @@ public class PauseMenu : MonoBehaviour
     void Pause()
     {
         if (settingsPanel != null) settingsPanel.SetActive(false);
-        if (pauseMenuUI != null)   pauseMenuUI.SetActive(true);
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(true);
 
         Time.timeScale = 0f;
         GameIsPaused = true;
@@ -74,13 +81,13 @@ public class PauseMenu : MonoBehaviour
     public void OpenSettings()
     {
         if (settingsPanel != null) settingsPanel.SetActive(true);
-        if (pauseMenuUI != null)   pauseMenuUI.SetActive(false);
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
     }
 
     public void BackFromSettings()
     {
         if (settingsPanel != null) settingsPanel.SetActive(false);
-        if (pauseMenuUI != null)   pauseMenuUI.SetActive(true);
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(true);
     }
 
     public void RestartLevel()
@@ -102,5 +109,12 @@ public class PauseMenu : MonoBehaviour
         }
 
         SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    // 🎵 Kutsutaan kun liukusäädintä liikutetaan
+    public void OnMusicVolumeChanged(float value)
+    {
+        if (audioManager != null)
+            audioManager.SetMusicVolume(value);
     }
 }
