@@ -18,6 +18,26 @@ public class PauseMenu : MonoBehaviour
 
     void Awake()
     {
+
+        
+    // Jos toinen PauseMenu on jo olemassa (esim. seuraavassa scenessä),
+    // tuhoamme tämän kopion, ettei tule kahta menua
+    var existing = FindObjectOfType<PauseMenu>();
+    if (existing != null && existing != this)
+    {
+        Destroy(gameObject);
+        return;
+    }
+
+    // Tämä PauseMenu pysyy kaikkien scenejen yli
+    DontDestroyOnLoad(gameObject);
+
+    // Fallback: auto-find managerit jos ei ole asetettu
+    if (uiManager == null)
+        uiManager = FindObjectOfType<SelectorUIManager>(true);
+    if (audioManager == null)
+        audioManager = FindObjectOfType<AudioManager>(true);
+
         // Fallback: auto-find managerit jos ei ole asetettu
         if (uiManager == null)
             uiManager = FindObjectOfType<SelectorUIManager>(true);
@@ -92,9 +112,21 @@ public class PauseMenu : MonoBehaviour
 
     public void RestartLevel()
     {
+        // Palauta aika normaaliksi ja nollaa pausestatus
         Time.timeScale = 1f;
+        GameIsPaused = false;
+
+        // Piilota mahdollinen pause-menu ettei jää näkyviin
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
+        if (settingsPanel != null) settingsPanel.SetActive(false);
+
+        // Valitse scene jonka haluat aloittaa alusta
+        // (voit muuttaa nimen omasi mukaiseksi)
+        string startSceneName = "HomeHubScene";
+
+        // Kun scene on ladattu, kytketään kamera pelaajaan
         SceneManager.sceneLoaded += OnSceneLoaded;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(startSceneName);
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
