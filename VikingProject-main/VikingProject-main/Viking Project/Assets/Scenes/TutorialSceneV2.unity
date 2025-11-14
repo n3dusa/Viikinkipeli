@@ -3160,7 +3160,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MinimapFollow
   player: {fileID: 0}
-  height: 10
+  height: 30
   rotateWithPlayer: 0
 --- !u!81 &269253136
 AudioListener:
