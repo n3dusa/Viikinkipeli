@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02c11d0dd99248440a710e364ee0626f, type: 3}
   m_Name: Wolf
   m_EditorClassIdentifier: Assembly-CSharp::NPCStatsSO
-  maxHealth: 0
+  maxHealth: 60
   armor: 0
-  minDamage: 0
-  maxDamage: 0
-  movementSpeed: 0
-  attackCooldown: 0
-  attackRange: 0
-  aggroRange: 0
-  coinDrop: 0
+  minDamage: 40
+  maxDamage: 45
+  movementSpeed: 5.5
+  attackCooldown: 1
+  attackRange: 1.3
+  aggroRange: 11
+  coinDrop: 2
