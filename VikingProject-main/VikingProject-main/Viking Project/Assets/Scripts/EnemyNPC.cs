@@ -181,6 +181,12 @@ public class EnemyNpc : QuestItem {
     
     // Handle enemy death
     void Die() {
+
+        if (SlimeKillTracker.Instance != null)
+        {
+            SlimeKillTracker.Instance.SlimeDied(gameObject);
+        }   
+
         Debug.Log("NPC died");
         npcAlive = false;
         animator.SetTrigger("Dying");
