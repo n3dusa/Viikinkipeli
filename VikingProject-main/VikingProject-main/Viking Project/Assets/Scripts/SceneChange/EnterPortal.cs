@@ -1,43 +1,56 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class EnterPortal : MonoBehaviour, IInteractable {
-    [Header("Strings for Scene and UI")]
-    [SerializeField] private string sceneName;
-    [SerializeField] private string interactName;
+public class SceneTravelTrigger : MonoBehaviour, IInteractable
+{
+    [Header("Scene Travel Settings")]
+    [SerializeField] private string sceneName;         // Name of the scene to load
+    [SerializeField] private string interactText;      // Interaction prompt
 
-    // Script for entering a dungeon
+    [Header("Requirements (Optional)")]
+    [SerializeField] private bool requiresQuest = false;
 
-    public void SwitchToLevelScene(PlayerController player) {
-        if (player.currentQuest) {
-            StartCoroutine(LoadLevelAsync(sceneName));
-        } else {
-            Debug.Log("You must have a quest to enter the Cave");
+    public void Interact(PlayerController player)
+    {
+        // If this interaction requires a quest but the player doesn't have one
+        if (requiresQuest && !player.currentQuest)
+        {
+            Debug.Log("You need a quest to use this travel point.");
+            return;
         }
+
+        // If no scene is specified, do nothing but log a warning
+        if (string.IsNullOrEmpty(sceneName))
+        {
+            Debug.LogWarning("SceneTravelTrigger: No scene name assigned.");
+            return;
+        }
+
+        StartCoroutine(LoadSceneAsync(sceneName));
     }
 
-    private IEnumerator LoadLevelAsync( string levelName ) {
+    private IEnumerator LoadSceneAsync(string levelName)
+    {
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(levelName);
 
-        // Wait until the asynchronous scene fully loads
-        while (!asyncLoad.isDone) {
-            float progress = Mathf.Clamp01(asyncLoad.progress / 0.9f); // 0.9f is the maximum progress value
-            Debug.Log("Loading progress: " + (progress * 100) + "%");
+        while (!asyncLoad.isDone)
+        {
+            float progress = Mathf.Clamp01(asyncLoad.progress / 0.9f);
+            Debug.Log("Loading progress: " + (progress * 100f) + "%");
             yield return null;
         }
     }
-    public string GetInteractText() {
-        return "Enter " + interactName;
+
+    // ------------ IInteractable Interface ------------
+
+    public string GetInteractText()
+    {
+        return interactText;
     }
 
-    public Transform GetTransform() {
+    public Transform GetTransform()
+    {
         return transform;
-    }
-
-    public void Interact( PlayerController player ) {
-        SwitchToLevelScene(player);
     }
 }

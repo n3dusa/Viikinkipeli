@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HUDManager : MonoBehaviour {
+public class HUDManager : MonoBehaviour
+{
     public PlayerController playerController;
+
     [Header("UI Elements")]
     [SerializeField] private GameObject questUI;
     [SerializeField] private TextMeshProUGUI healthText;
@@ -17,60 +18,114 @@ public class HUDManager : MonoBehaviour {
     [SerializeField] private Slider easeHealthSlider;
 
     public List<ObjectiveSO> objectives = new List<ObjectiveSO>();
-
     public List<Toggle> objectiveUIs = new List<Toggle>();
-
     public List<Text> objectiveLabelObjects = new List<Text>();
 
-    public void Update() {
+
+    private void Awake()
+    {
+        // Auto-assign missing PlayerController
+        if (playerController == null)
+        {
+            playerController = FindObjectOfType<PlayerController>();
+            if (playerController == null)
+            {
+                Debug.LogError("HUDManager: PlayerController is NOT assigned and cannot be found in the scene!");
+            }
+        }
+
+        // UI validation
+        if (healthSlider == null) Debug.LogError("HUDManager: healthSlider is NOT assigned!");
+        if (easeHealthSlider == null) Debug.LogError("HUDManager: easeHealthSlider is NOT assigned!");
+        if (questTitle == null) Debug.LogError("HUDManager: questTitle is NOT assigned!");
+        if (questDescription == null) Debug.LogError("HUDManager: questDescription is NOT assigned!");
+        if (questUI == null) Debug.LogError("HUDManager: questUI is NOT assigned!");
+    }
+
+
+    private void Update()
+    {
         RefreshHUDInfo();
         UpdateHealthUI();
     }
 
+
     // Set current active quest info on played hud
-    void SetObjectiveUI() {
-        for (int i = 0; i < objectives.Count; i++) {
+    void SetObjectiveUI()
+    {
+        for (int i = 0; i < objectives.Count; i++)
+        {
+            if (i >= objectiveUIs.Count || i >= objectiveLabelObjects.Count)
+                break;
+
+            if (objectiveUIs[i] == null || objectiveLabelObjects[i] == null)
+                continue;
+
             objectiveUIs[i].gameObject.SetActive(true);
             objectiveLabelObjects[i].text = objectives[i].description;
             objectiveUIs[i].isOn = objectives[i].Completed;
         }
-        for (int i = objectives.Count; i < objectiveUIs.Count; i++) {
-            objectiveUIs[i].gameObject.SetActive(false);
+
+        for (int i = objectives.Count; i < objectiveUIs.Count; i++)
+        {
+            if (objectiveUIs[i] != null)
+                objectiveUIs[i].gameObject.SetActive(false);
         }
     }
 
-    public void RefreshHUDInfo() { 
-        string description;
-        string header;
-        if (playerController.currentQuest) {
+
+    public void RefreshHUDInfo()
+    {
+        if (playerController == null) return;
+
+        if (playerController.currentQuest)
+        {
             questUI.SetActive(true);
             objectives = playerController.currentQuest.objectives;
             SetObjectiveUI();
-            description = playerController.currentQuest.questDescription;
-            header = playerController.currentQuest.name;
-        } else {
-            questUI.SetActive(false);
-            description = "";
-            header = "";
+            questTitle.text = playerController.currentQuest.name;
+            questDescription.text = playerController.currentQuest.questDescription;
         }
-        questTitle.text = header;
-        questDescription.text = description;
+        else
+        {
+            questUI.SetActive(false);
+            questTitle.text = "";
+            questDescription.text = "";
+        }
     }
 
+
     // Health bar sliders
-    void UpdateHealthUI() {
+    void UpdateHealthUI()
+    {
+        if (playerController == null || healthSlider == null || easeHealthSlider == null)
+            return;
+
         PlayerData playerData = PlayerData.Instance;
-        float healthLerpSpeed = 0.01f; //Value for healthbar animation speed
+        if (playerData == null)
+        {
+            Debug.LogError("HUDManager: PlayerData.Instance is NULL!");
+            return;
+        }
+
+        float healthLerpSpeed = 0.01f;
+
         healthSlider.maxValue = playerData.activeMaxHealth;
         easeHealthSlider.maxValue = playerData.activeMaxHealth;
-        //If health value changes, update healthslider to new value
-        if (healthSlider.value > playerController.currentHealth) {
+
+        // Snap healthSlider to current health
+        if (healthSlider.value > playerController.currentHealth)
+        {
             healthSlider.value = playerController.currentHealth;
-        } else if (healthSlider.value < playerController.currentHealth) {
-            healthSlider.value = Mathf.Lerp(healthSlider.value, playerController.currentHealth, healthLerpSpeed * 2);
         }
-        //For nice animation
-        if (healthSlider.value != easeHealthSlider.value) {
+        else if (healthSlider.value < playerController.currentHealth)
+        {
+            healthSlider.value = Mathf.Lerp(healthSlider.value, playerController.currentHealth, healthLerpSpeed * 2f);
+        }
+
+        // Smooth animation using easeHealthSlider
+        if (Mathf.Abs(easeHealthSlider.value - playerController.currentHealth) > 0.01f)
+        {
             easeHealthSlider.value = Mathf.Lerp(easeHealthSlider.value, playerController.currentHealth, healthLerpSpeed * 1.5f);
         }
     }
