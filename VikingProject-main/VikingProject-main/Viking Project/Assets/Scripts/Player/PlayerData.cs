@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,8 +9,8 @@ public class PlayerData : MonoBehaviour {
     public WeaponSO weapon;
 
     [Header("Player Quests")]
-    public QuestSO currentQuest; // Active quest for player
-    public List<ObjectiveSO> objectives; //List of all objectives set for player from active quest
+    public QuestSO currentQuest;
+    public List<ObjectiveSO> objectives;
 
     [Header("Blessing")]
     public BlessingSO blessing;
@@ -27,14 +26,19 @@ public class PlayerData : MonoBehaviour {
     public float activeSpeed;
 
     private void Awake() {
-        if (Instance == null) {
-            activeMaxHealth = stats.maxHealth;
-            activeSpeed = stats.movementSpeed;
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        } else {
+        Debug.Log($"[PlayerData] Awake on {gameObject.name}", this);
+
+        if (Instance != null && Instance != this) {
+            Debug.Log($"[PlayerData] Duplicate found, destroying {gameObject.name}", this);
             Destroy(gameObject);
+            return;
         }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);   // THIS is what should move it to DontDestroyOnLoad
+
+        activeMaxHealth = stats.maxHealth;
+        activeSpeed = stats.movementSpeed;
     }
     public void UpdateWeapon( WeaponSO newWeapon ) {
         weapon = newWeapon;
