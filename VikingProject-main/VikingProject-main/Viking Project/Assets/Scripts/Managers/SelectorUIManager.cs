@@ -38,17 +38,30 @@ public class SelectorUIManager : MonoBehaviour
     [Header("Player HUD")]
     public GameObject inGameHud;
 
+    // HUD label that always shows current potion count
+    [Tooltip("Bind a TMP text on your HUD that should always display health potion count.")]
+    public TextMeshProUGUI hudPotionCountText;
+
     [Header("Active UI element")]
     public GameObject activeUI;
 
-    // Lets PauseMenu know â€œEscapeâ€ has already been handled this frame
+    // Lets PauseMenu know “Escape has already been handled this frame”
     public static bool EatEscapeThisFrame = false;
 
     // True if a gameplay UI is currently open
     public bool IsAnyUIOpen => activeUI != null && activeUI.activeSelf;
 
+    void Start()
+    {
+        // Initialize HUD text at startup
+        UpdateHudPotionCount();
+    }
+
     void Update()
     {
+        // Always keep HUD potion label synced to PlayerData
+        UpdateHudPotionCount();
+
         // Escape closes current non-pause UI
         if (Input.GetKeyDown(KeyCode.Escape) && IsAnyUIOpen)
         {
@@ -102,5 +115,21 @@ public class SelectorUIManager : MonoBehaviour
         if (inGameHud == null) return;
         bool isActive = inGameHud.activeSelf;
         inGameHud.SetActive(!isActive);
+    }
+
+    // Update the HUD potion count from PlayerData
+    private void UpdateHudPotionCount()
+    {
+        if (hudPotionCountText == null) return;
+
+        // Use PlayerData as the single source of truth
+        int potions = 0;
+        if (PlayerData.Instance != null)
+        {
+            potions = PlayerData.Instance.healthPotions;
+        }
+
+        hudPotionCountText.text = potions.ToString();
+        
     }
 }
