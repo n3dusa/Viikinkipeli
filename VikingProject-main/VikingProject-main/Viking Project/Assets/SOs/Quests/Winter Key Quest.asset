@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b34def55f1bbeed4d887f12d7cc3bd61, type: 3}
-  m_Name: WinterKeyQuest
+  m_Name: Winter Key Quest
   m_EditorClassIdentifier: Assembly-CSharp::QuestSO
   active: 0
   questDescription: Find key in the tutorial ruins to unlock the path to Jotunheimr.
