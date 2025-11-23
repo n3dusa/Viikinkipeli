@@ -250,17 +250,40 @@ public class PlayerController : MonoBehaviour, IWeaponParent {
     }
 
     // Method for the player to receive a new quest.
-    public void ReceiveNewQuest( QuestSO quest ) {
-        // Activate the quest.
+    public void ReceiveNewQuest(QuestSO quest)
+    {
+        // 1) Hook up objectives → quest
+        if (quest.objectives != null)
+        {
+            foreach (ObjectiveSO obj in quest.objectives)
+            {
+                if (obj == null) continue;
+
+                // make sure objective starts incomplete
+                obj.Completed = false;
+
+                // THIS is what fixes "Objective not set to a quest"
+                obj.parentQuest = quest;
+            }
+        }
+
+        // 2) Activate the quest
         quest.active = true;
         OnQuestActivated?.Invoke();
-        // Set the current quest to the received quest.
+
+        // 3) Store on player + PlayerData
         currentQuest = quest;
-        PlayerData.Instance.UpdateCurrentQuest(quest);
-        // Subscribe to the OnQuestCompleted event of the received quest.
+        if (PlayerData.Instance != null)
+        {
+            PlayerData.Instance.UpdateCurrentQuest(quest);
+            PlayerData.Instance.objectives = new List<ObjectiveSO>(quest.objectives);
+        }
+
+        // 4) Subscribe to completion
         Debug.Log("subscribed to " + quest);
         quest.OnQuestCompleted += RemoveCompletedQuest;
     }
+
 
     // Removes a completed quest from the list of open quests.
     void RemoveCompletedQuest( QuestSO quest ) {

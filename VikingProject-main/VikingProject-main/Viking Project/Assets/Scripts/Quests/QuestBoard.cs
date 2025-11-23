@@ -77,10 +77,24 @@ public class QuestBoard : MonoBehaviour, IInteractable {
     }
 
     // Give the quest to the player and initialize quest items
-    public void GiveQuestToPlayer( PlayerController player) {
-        Debug.Log(player + " given quest " + questList[inspectedQuestIteration]);
-        // Pass the quest to the player to start tracking
-        player.ReceiveNewQuest(questList[inspectedQuestIteration]);
+    public void GiveQuestToPlayer(PlayerController player)
+    {
+        QuestSO selectedQuest = questList[inspectedQuestIteration];
+
+        Debug.Log(player + " given quest " + selectedQuest.name);
+
+        // 1) Mark quest as active
+        selectedQuest.active = true;
+
+        // 2) Store it in PlayerData so other systems (like portals) can see it
+        if (PlayerData.Instance != null)
+        {
+            PlayerData.Instance.UpdateCurrentQuest(selectedQuest);
+            PlayerData.Instance.objectives = new List<ObjectiveSO>(selectedQuest.objectives);
+        }
+
+        // 3) Inform the player controller (whatever it already does)
+        player.ReceiveNewQuest(selectedQuest);
     }
 
     public void Interact( PlayerController player ) {

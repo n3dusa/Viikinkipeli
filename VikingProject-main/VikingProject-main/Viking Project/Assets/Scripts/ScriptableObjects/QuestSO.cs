@@ -12,11 +12,11 @@ public class QuestSO : ScriptableObject {
     [TextArea]
     public string questDescription;
 
-    //List of objectives for the quest set in the Editor
-    //Here you put objectives you want the script to clone in initialization
+    // List of objectives for the quest set in the Editor
+    // Here you put objectives you want the script to clone in initialization
     public List<ObjectiveSO> objectives = new List<ObjectiveSO>();
 
-    //Try to complete quest
+    // Try to complete quest
     public void TryEndQuest() {
         // Check if quest has no objectives set to it
         if (objectives == null || objectives.Count == 0) {
@@ -46,6 +46,20 @@ public class QuestSO : ScriptableObject {
             QuestCompleted = true;
             active = false;
             OnQuestCompleted?.Invoke(this);
+        }
+    }
+
+    // Reset quest state for a new game / run
+    public void ResetQuest() {
+        active = false;
+        QuestCompleted = false;
+
+        if (objectives != null) {
+            foreach (var objective in objectives) {
+                if (objective != null) {
+                    objective.Completed = false;
+                }
+            }
         }
     }
 }
