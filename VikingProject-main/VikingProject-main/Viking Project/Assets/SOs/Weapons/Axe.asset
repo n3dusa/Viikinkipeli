@@ -16,7 +16,7 @@ MonoBehaviour:
   objectName: Axe
   minDamage: 25
   maxDamage: 40
-  attackSpeed: 2
+  attackSpeed: 3
   hitRange: 2
   blockingPower: 2
   twoHanded: 1

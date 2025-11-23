@@ -6,65 +6,42 @@ using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using static UnityEngine.EventSystems.EventTrigger;
 
-public class PlayerCombat : MonoBehaviour
-{
+public class PlayerCombat : MonoBehaviour {
     [SerializeField] private PlayerController playerController;
 
     [Header("Health Stats")]
     private float lastDamageTime; // Time when player last took damage
     private float damageCooldown = 2f; // Cooldown duration in seconds
-
     [Header("Weapon fields")]
     public WeaponSO weapon; //Weapon of player
     public GameObject weaponObject;
     public float attackDuration;
-
     [Header("Enemy layer")]
     public LayerMask enemyLayer; // Define the layer for enemy NPCs
 
     public static event Action OnPlayerDeath;
 
-    [Header("Health Regeneration")] // HP Regen variables
-    public float healthRegenRate = 5f; // HP per second
-    public float regenDelay = 5f;      // Seconds after taking damage before regen starts
-
-    private void LateUpdate()
-    {
-        // Päivitä ase info
+    // Update weapon info
+    private void LateUpdate() {
         weapon = playerController.weapon;
-        if (weapon)
-        {
+        if (weapon) {
             weaponObject = weapon.prefab;
-        }
-
-        // HP Regeneration
-        if (playerController.isAlive && Time.time - lastDamageTime >= regenDelay)
-        {
-            if (playerController.currentHealth < playerController.stats.maxHealth)
-            {
-                playerController.currentHealth += healthRegenRate * Time.deltaTime;
-                if (playerController.currentHealth > playerController.stats.maxHealth)
-                    playerController.currentHealth = playerController.stats.maxHealth;
-            }
         }
     }
 
     //Handling hit detection
-    public void AttackHit(Collider hitCollider)
-    {
-        if (attackDuration > 0)
-        {
+    public void AttackHit( Collider hitCollider ) {
+        if (attackDuration > 0) {
             int damage = UnityEngine.Random.Range(weapon.minDamage, weapon.maxDamage + 1);
             hitCollider.GetComponent<EnemyNpc>().TakeDamage(damage);
         }
+        
     }
 
     // Perform attack animation
-    public IEnumerator PerformAttack()
-    {
+    public IEnumerator PerformAttack() {
         playerController.playerAnimations.playerAnimator.speed = 1.0f / attackDuration;
-        while (attackDuration > 0)
-        {
+        while (attackDuration > 0) {
             playerController.playerAnimations.playerAnimator.SetBool("Block", false);
             playerController.isBlocking = false;
             attackDuration -= Time.deltaTime;
@@ -74,13 +51,10 @@ public class PlayerCombat : MonoBehaviour
     }
 
     // Handle player taking damage
-    public void TakeDamage(float damage)
-    {
-        if (playerController.isAlive)
-        {
+    public void TakeDamage( float damage ) {
+        if (playerController.isAlive) {
             //If player is blocking change the damage value based on player weapon blocking power
-            if (playerController.isBlocking)
-            {
+            if (playerController.isBlocking) {
                 damage /= weapon.blockingPower;
                 Debug.Log("Blocked");
             }
@@ -88,33 +62,24 @@ public class PlayerCombat : MonoBehaviour
             damage = damage - playerController.stats.armor;
             Debug.Log("Player took " + damage + " dmg");
             //Perform death when health is depleted
-            if (Time.time - lastDamageTime >= damageCooldown)
-            {
+            if (Time.time - lastDamageTime >= damageCooldown) {
                 playerController.currentHealth -= damage;
                 Debug.Log(playerController.currentHealth);
-            }
-            else
-            {
+            } else {
                 damage *= 0.2f;
                 playerController.currentHealth -= damage;
             }
-            if (playerController.currentHealth <= 0)
-            {
+            if (playerController.currentHealth <= 0) {
                 HandleDeath(playerController.playerAnimations);
-            }
-            else
-            {
+            } else {
                 playerController.playerAnimations.PlayHitAnimation();
             }
             //Update last damage time
             lastDamageTime = Time.time;
         }
     }
-
-    public void HandleDeath(PlayerAnimations playerAnimations)
-    {
-        if (playerController.isAlive)
-        {
+    public void HandleDeath( PlayerAnimations playerAnimations ) {
+        if (playerController.isAlive) { 
             playerAnimations.PlayDeathAnimation();
             OnPlayerDeath?.Invoke();
             playerController.isAlive = false;

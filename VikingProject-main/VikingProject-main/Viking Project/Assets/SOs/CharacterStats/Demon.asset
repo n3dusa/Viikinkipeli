@@ -18,6 +18,6 @@ MonoBehaviour:
   maxDamage: 95
   movementSpeed: 2
   attackCooldown: 2.5
-  attackRange: 2.1
+  attackRange: 1.1
   aggroRange: 10
   coinDrop: 10
