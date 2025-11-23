@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NPCStatsSO
   maxHealth: 60
   armor: 0
-  minDamage: 40
-  maxDamage: 45
+  minDamage: 0
+  maxDamage: 0
   movementSpeed: 5.5
   attackCooldown: 1
   attackRange: 1.3
