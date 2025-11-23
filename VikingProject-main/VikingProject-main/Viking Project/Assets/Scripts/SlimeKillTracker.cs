@@ -7,13 +7,13 @@ public class SlimeKillTracker : MonoBehaviour
     public static SlimeKillTracker Instance { get; private set; }
 
     [Header("Slimes to track (drag them here)")]
-    public List<GameObject> slimes = new List<GameObject>();
+    [SerializeField] private List<GameObject> slimes = new List<GameObject>();
 
-    [Header("Objective to complete")]
-    public ObjectiveSO killAllSlimesObjective;
+    [Header("Objective to complete when all are dead")]
+    [SerializeField] private ObjectiveSO killAllSlimesObjective;
 
-    [Header("Quest to complete")]
-    public QuestSO questToComplete;
+    [Header("Quest that this objective belongs to (the slime quest)")]
+    [SerializeField] private QuestSO slimeQuest;
 
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI slimeCounterText;
@@ -25,6 +25,9 @@ public class SlimeKillTracker : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+
+        if (slimeCounterText == null)
+            slimeCounterText = GetComponentInChildren<TextMeshProUGUI>();
     }
 
     private void Start()
@@ -33,11 +36,15 @@ public class SlimeKillTracker : MonoBehaviour
         slimesAlive = totalSlimes;
         slimesKilled = 0;
 
-        UpdateUI();
-        Debug.Log($"Tracking {totalSlimes} slimes.");
+        UpdateVisibilityAndText(true);
     }
 
-    // Called by each slime when it dies
+    private void Update()
+    {
+        UpdateVisibilityAndText();
+    }
+
+    // Call this from each slime when it dies
     public void SlimeDied(GameObject slime)
     {
         if (!slimes.Contains(slime))
@@ -46,26 +53,30 @@ public class SlimeKillTracker : MonoBehaviour
         slimesAlive--;
         slimesKilled++;
 
-        Debug.Log($"Slime died. Remaining: {slimesAlive}");
-        UpdateUI();
+        UpdateVisibilityAndText(true);
 
         if (slimesAlive <= 0)
         {
-            Debug.Log("All slimes killed!");
-
             if (killAllSlimesObjective != null)
                 killAllSlimesObjective.Completed = true;
 
-            if (questToComplete != null)
-                questToComplete.TryEndQuest();
+            if (slimeQuest != null)
+                slimeQuest.TryEndQuest();
         }
     }
 
-    private void UpdateUI()
+    private void UpdateVisibilityAndText(bool forceUpdateText = false)
     {
-        if (slimeCounterText == null)
+        if (slimeCounterText == null || slimeQuest == null)
             return;
 
-        slimeCounterText.text = $"Slimes killed: {slimesKilled} / {totalSlimes}";
+        bool shouldShow = slimeQuest.active && !slimeQuest.QuestCompleted;
+
+        slimeCounterText.gameObject.SetActive(shouldShow);
+
+        if (shouldShow && (forceUpdateText || Application.isPlaying))
+        {
+            slimeCounterText.text = $"Slimes killed: {slimesKilled} / {totalSlimes}";
+        }
     }
 }

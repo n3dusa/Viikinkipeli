@@ -9236,7 +9236,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: slime kill tracker lorem ipsum popsum
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d25f606173d0e834eb90633c87a35b05, type: 2}
   m_sharedMaterial: {fileID: -5211876874483632919, guid: d25f606173d0e834eb90633c87a35b05, type: 2}
@@ -16806,9 +16806,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1219415525}
-  - component: {fileID: 1219415526}
+  - component: {fileID: 1219415529}
   - component: {fileID: 1219415528}
   - component: {fileID: 1219415527}
+  - component: {fileID: 1219415526}
   m_Layer: 0
   m_Name: Key
   m_TagString: Untagged
@@ -16834,33 +16835,7 @@ Transform:
   - {fileID: 1792778349}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1219415526
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1219415524}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f214c8feb8b43434a9f8ad36feb7f7eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::QuestItem
-  parentQuest: {fileID: 11400000, guid: 4c18966314134ac45802ae1c36087b49, type: 2}
-  objective: {fileID: 11400000, guid: 86f147485e1440c49a83f35d952730f2, type: 2}
---- !u!114 &1219415527
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1219415524}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a67548b041dc8cf478d7026b17fac65e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WinterKeyPickup
---- !u!65 &1219415528
+--- !u!65 &1219415526
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -16881,6 +16856,46 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1219415527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1219415524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43c86fb1a84e664478129519de9256e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuestObjectToggle
+  targetQuest: {fileID: 11400000, guid: 4c18966314134ac45802ae1c36087b49, type: 2}
+  targetObject: {fileID: 0}
+--- !u!114 &1219415528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1219415524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a67548b041dc8cf478d7026b17fac65e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WinterKeyPickup
+--- !u!114 &1219415529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1219415524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f214c8feb8b43434a9f8ad36feb7f7eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuestItem
+  parentQuest: {fileID: 11400000, guid: 4c18966314134ac45802ae1c36087b49, type: 2}
+  objective: {fileID: 11400000, guid: 86f147485e1440c49a83f35d952730f2, type: 2}
 --- !u!4 &1221336539 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 299426823948465820, guid: 0e4b4701552154544bd95c037f406c32, type: 3}
@@ -21896,7 +21911,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1530614284}
   - component: {fileID: 1530614283}
-  - component: {fileID: 1530614285}
   m_Layer: 0
   m_Name: SlimeTracker
   m_TagString: Untagged
@@ -21925,7 +21939,7 @@ MonoBehaviour:
   - {fileID: 273217969}
   - {fileID: 1985993597}
   killAllSlimesObjective: {fileID: 11400000, guid: ac1bbc935002684468e1136e06a77945, type: 2}
-  questToComplete: {fileID: 11400000, guid: bf0358c8f3bc78b41aa8e9f1a54f23dd, type: 2}
+  slimeQuest: {fileID: 11400000, guid: bf0358c8f3bc78b41aa8e9f1a54f23dd, type: 2}
   slimeCounterText: {fileID: 665623347}
 --- !u!4 &1530614284
 Transform:
@@ -21943,20 +21957,6 @@ Transform:
   - {fileID: 207723821}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1530614285
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1530614282}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b044869f9e37e7479f89d4c215136ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::QuestUITextToggle
-  quest: {fileID: 11400000, guid: bf0358c8f3bc78b41aa8e9f1a54f23dd, type: 2}
-  textElement: {fileID: 665623347}
 --- !u!1001 &1536211112
 PrefabInstance:
   m_ObjectHideFlags: 0

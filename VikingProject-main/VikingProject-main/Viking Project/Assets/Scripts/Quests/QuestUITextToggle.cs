@@ -3,29 +3,36 @@ using TMPro;
 
 public class QuestUITextToggle : MonoBehaviour
 {
-    [Header("Quest to Watch")]
-    [SerializeField] private QuestSO quest;
+    [Header("Show this text only when THIS quest is the current quest")]
+    [SerializeField] private QuestSO targetQuest;
 
     [Header("UI Element (TMP Text)")]
     [SerializeField] private TextMeshProUGUI textElement;
 
-    private void Start()
+    private void Awake()
     {
-        UpdateVisibility();
+        // Auto-find if not assigned
+        if (textElement == null)
+            textElement = GetComponent<TextMeshProUGUI>();
     }
 
     private void Update()
     {
-        UpdateVisibility();
-    }
-
-    private void UpdateVisibility()
-    {
-        if (quest == null || textElement == null)
+        if (textElement == null || targetQuest == null || PlayerData.Instance == null)
             return;
 
-        // Show text if quest is active and not completed
-        bool shouldShow = quest.active && !quest.QuestCompleted;
+        var currentQuest = PlayerData.Instance.currentQuest;
+
+        // Only show if:
+        // 1) There *is* a current quest
+        // 2) That quest is exactly the target quest (the slime quest asset)
+        // 3) It is active
+        // 4) It is not completed
+        bool shouldShow =
+            currentQuest == targetQuest &&
+            targetQuest.active &&
+            !targetQuest.QuestCompleted;
+
         textElement.gameObject.SetActive(shouldShow);
     }
 }

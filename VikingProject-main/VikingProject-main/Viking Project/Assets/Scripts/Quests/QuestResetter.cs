@@ -23,14 +23,13 @@ public class QuestResetter : MonoBehaviour
             if (quest != null)
             {
                 quest.ResetQuest();
-                // Optional debug:
                 // Debug.Log("[QuestResetter] Reset quest: " + quest.name);
             }
         }
 
         hasResetThisSession = true;
 
-        // We don't need this object anymore
+        // Destroy this GameObject so it never runs again
         Destroy(gameObject);
     }
 }
